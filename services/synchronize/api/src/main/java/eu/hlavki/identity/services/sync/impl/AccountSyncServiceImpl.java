@@ -145,15 +145,11 @@ public class AccountSyncServiceImpl implements AccountSyncService {
                 map(m -> ldapService.getAccountDN(emailAccountMap.get(m.getEmail()))).
                 collect(Collectors.toSet());
         LdapGroup result = ldapGroup;
-        if (!members.isEmpty()) {
-            ldapGroup.setMembersDn(members);
-            log.info("Synchronizing GSuite group {} as LDAP group {} with {} members",
-                    gsuiteGroup.getEmail(), ldapGroup.getName(), ldapGroup.getMembersDn().size());
-            result = ldapService.createOrUpdateGroup(ldapGroup);
-        } else {
-            log.info("Removing group {} from LDAP. No active members!", ldapGroup.getName());
-            ldapService.deleteGroup(ldapGroup.getName());
-        }
+        ldapGroup.setMembersDn(members);
+        log.info("Synchronizing GSuite group {} as LDAP group {} with {} members",
+                 gsuiteGroup.getEmail(), ldapGroup.getName(), ldapGroup.getMembersDn().size());
+        result = ldapService.createOrUpdateGroup(ldapGroup);
+
         return result;
     }
 
